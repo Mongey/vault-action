@@ -21,12 +21,17 @@ async function retrieveToken(method, client) {
             if (!method || method === 'token') {
                 return core.getInput('token', { required: true });
             } else {
-                /** @type {string} */
+                /** @type {string|object} */
                 const payload = core.getInput('authPayload', { required: true });
                 if (!payload) {
                     throw Error('When using a custom authentication method, you must provide the payload');
                 }
-                return await getClientToken(client, method, JSON.parse(payload.trim()));
+                var fullPayload = payload;
+                if(typeof payload === 'string') {
+                    fullPayload = JSON.parse(payload.trim())
+                }
+
+                return await getClientToken(client, method, fullPayload);
             }
         }
     }
